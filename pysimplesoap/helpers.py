@@ -44,7 +44,7 @@ def fetch(url, http, cache=False, force_download=False, wsdl_basedir='', headers
     # check / append a valid schema if not given:
     url_scheme, netloc, path, query, fragment = urlsplit(url)
     if not url_scheme in ('http', 'https', 'file'):
-        for scheme in ('http', 'https', 'file'):
+        for scheme in ('https', 'http', 'file'):
             try:
                 path = os.path.normpath(os.path.join(wsdl_basedir, url))
                 if not url.startswith("/") and scheme in ('http', 'https'):
@@ -74,6 +74,8 @@ def fetch(url, http, cache=False, force_download=False, wsdl_basedir='', headers
         else:
             log.info('GET %s using %s' % (url, http._wrapper_version))
             response, xml = http.request(url, 'GET', None, headers)
+            if response.status != 200:
+                raise Exception('Error Fetching url %s ' % url)
         if cache:
             log.info('Writing file %s' % filename)
             if not os.path.isdir(cache):
